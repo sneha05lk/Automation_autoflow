@@ -1,0 +1,11 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c10;--bg2:#0f1117;--bg3:#151820;
+  --border:#1e2332;--border2:#2a3045;
+  --accent:#6c63ff;--green:#00d9a0;--red:#ff6b6b;--amber:#f0a500;
+  --text:#e8eaf0;--muted:#6b7a99;--card:#12151f;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
