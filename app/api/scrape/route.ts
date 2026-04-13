@@ -36,13 +36,24 @@ export async function POST(req: NextRequest) {
 
     console.log(`[API/scrape] keyword="${keyword}" sources=${sources.join(',')}`)
 
-    // Run scraper (Now parallelized in lib/scraper.ts)
-    const leads = await runScraper(keyword, sources)
+    const { leads, serperErrors } = await runScraper(keyword, sources)
 
     if (leads.length === 0) {
+      const serperHint =
+        serperErrors.length > 0
+          ? ` Serper reported: ${serperErrors.join(' ')}`
+          : ''
       return NextResponse.json({
-        total: 0, hot: 0, cold: 0, keyword,
-        message: 'No leads found. Serper might have returned empty results or extraction failed.',
+        total: 0,
+        hot: 0,
+        cold: 0,
+        keyword,
+        serperErrors,
+        message:
+          (serperErrors.length
+            ? 'No leads saved.'
+            : 'No leads found. Results may be empty or contact info could not be extracted.') +
+          serperHint,
       })
     }
 

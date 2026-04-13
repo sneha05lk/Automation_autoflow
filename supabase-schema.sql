@@ -31,9 +31,16 @@ create table if not exists leads (
 -- Phone dedupe when email is null (run once on existing projects)
 alter table leads add column if not exists phone_normalized text;
 
-create unique index if not exists idx_leads_phone_normalized
-  on leads (phone_normalized)
-  where phone_normalized is not null and length(phone_normalized) >= 10;
+-- IMPORTANT:
+-- The app uses `upsert(..., { onConflict: 'phone_normalized' })`.
+-- That requires a NON-partial UNIQUE constraint/index on (phone_normalized),
+-- otherwise Postgres returns:
+--   "there is no unique or exclusion constraint matching the ON CONFLICT specification"
+--
+-- This unique constraint still allows multiple NULLs (Postgres behavior),
+-- and the app only sets phone_normalized for 10+ digit phones.
+alter table leads
+  add constraint leads_phone_normalized_unique unique (phone_normalized);
 
 -- FOLLOWUPS TABLE
 create table if not exists followups (
